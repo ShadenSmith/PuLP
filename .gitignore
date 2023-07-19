@@ -1,0 +1,8 @@
+
+# Build artifacts
+*.o
+libpulp.a
+pulp
+libxtrapulp.a
+xtrapulp
+
