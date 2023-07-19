@@ -205,7 +205,7 @@ int main(int argc, char** argv)
 
     pulp_part_control_t ppc = {vert_balance, edge_balance, 
       do_lp_init, do_bfs_init, false, do_edge_balance, do_maxcut_balance,
-      false, pulp_seed};
+      true, pulp_seed};
     
     printf("\nBeginning partitioning ... ");
     elt = timer();
