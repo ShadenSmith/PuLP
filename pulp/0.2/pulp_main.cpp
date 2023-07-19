@@ -204,7 +204,7 @@ int main(int argc, char** argv)
       for (int i = 0; i < g.n; ++i) parts[i] = rand() % num_parts;
 
     pulp_part_control_t ppc = {vert_balance, edge_balance, 
-      do_lp_init, do_bfs_init, do_edge_balance, do_maxcut_balance,
+      do_lp_init, do_bfs_init, false, do_edge_balance, do_maxcut_balance,
       false, pulp_seed};
     
     printf("\nBeginning partitioning ... ");

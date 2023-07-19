@@ -1,4 +1,4 @@
-CXX=g++
+#CXX=g++
 CXXFLAGS=-fopenmp -O3 -Wall
 
 all: pulp libpulp
