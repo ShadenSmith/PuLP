@@ -125,9 +125,9 @@ int* label_prop(pulp_graph_t& g, int num_parts, int* parts,
       for (int j = 0; j < num_parts; ++j)
         part_counts[j] = 0;
 
-      unsigned out_degree = out_degree(g, v);
+      unsigned v_degree = out_degree(g, v);
       int* outs = out_vertices(g, v);
-      for (unsigned j = 0; j < out_degree; ++j)
+      for (unsigned j = 0; j < v_degree; ++j)
       {
         int out = outs[j];
         int part = parts[out];
@@ -155,8 +155,17 @@ int* label_prop(pulp_graph_t& g, int num_parts, int* parts,
         }
       }
 
-      if (num_max > 1)
-        max_part = part_counts[(int)rand() % num_max];
+      if (num_max > 1) {
+        int rand_val;
+
+        // TODO: thread-local RNG
+        #pragma omp critical
+        {
+          rand_val = (int)rand();
+        }
+
+        max_part = part_counts[rand_val % num_max];
+      }
 
       if (max_part != part && 
           (part_sizes[part]-1) > (int)min_size)
@@ -185,7 +194,7 @@ int* label_prop(pulp_graph_t& g, int num_parts, int* parts,
             thread_queue_size = 0;
           }
         }
-        for (unsigned j = 0; j < out_degree; ++j)
+        for (unsigned j = 0; j < v_degree; ++j)
         {
           if (!in_queue_next[outs[j]])
           {
@@ -280,8 +289,9 @@ int* label_prop_weighted(pulp_graph_t& g, int num_parts, int* parts,
   xs1024star_seed((unsigned long)(seed + omp_get_thread_num()), &xs);
 
 #pragma omp for
-  for (int i = 0; i < num_verts; ++i)
-    parts[i] = (int)((unsigned)xs1024star_next(&xs) % (unsigned)num_parts);
+  for (int i = 0; i < num_verts; ++i) {
+    parts[i] = (int)(xs1024star_next(&xs) % (uint64_t)num_parts);
+  }
 
   long* part_sizes_thread = new long[num_parts];
   for (int i = 0; i < num_parts; ++i) 
@@ -327,16 +337,24 @@ int* label_prop_weighted(pulp_graph_t& g, int num_parts, int* parts,
       for (int j = 0; j < num_parts; ++j)
         part_counts[j] = 0;
 
-      unsigned out_degree = out_degree(g, v);
+      unsigned v_degree = out_degree(g, v);
       int* outs = out_vertices(g, v);
       int* weights = out_weights(g, v);
-      for (unsigned j = 0; j < out_degree; ++j)
+      for (unsigned j = 0; j < v_degree; ++j)
       {
         int out = outs[j];
         int part_out = parts[out];
         double weight_out = 1.0;
         if (has_ewgts) weight_out = (double)weights[j];
-        part_counts[part_out] += (double)out_degree(g, out)*weight_out;
+
+        if (out >= g.n) printf("invalid out: %d, n: %d\n", out, g.n);
+        if (out < 0) printf("invalid out: %d\n", out);
+        if (part_out >= num_parts) {
+          printf("invalid part_out: %d, num_parts: %d\n", part_out, num_parts);
+          fflush(stdout);
+          exit(1);
+        }
+        part_counts[part_out] += ((double)out_degree(g, out))*weight_out;
       }
       
       int part = parts[v];
@@ -358,8 +376,9 @@ int* label_prop_weighted(pulp_graph_t& g, int num_parts, int* parts,
         }
       }
 
-      if (num_max > 1)
-        max_part = part_counts[(int)xs1024star_next(&xs) % num_max];
+      if (num_max > 1) {
+          max_part = part_counts[(xs1024star_next(&xs) % num_max)];
+      }
 
       if (max_part != part && 
           (part_sizes[part] - v_weight > (int)min_size))
@@ -369,6 +388,11 @@ int* label_prop_weighted(pulp_graph_t& g, int num_parts, int* parts,
     #pragma omp atomic
         part_sizes[part] -= v_weight;
         
+        if(max_part >= num_parts) {
+          printf("BAD max_part: %d, num_parts: %d\n", max_part, num_parts);
+          fflush(stdout);
+          exit(1);
+        }
         parts[v] = max_part;
         ++num_changes;
 
@@ -388,7 +412,7 @@ int* label_prop_weighted(pulp_graph_t& g, int num_parts, int* parts,
             thread_queue_size = 0;
           }
         }
-        for (unsigned j = 0; j < out_degree; ++j)
+        for (unsigned j = 0; j < v_degree; ++j)
         {
           if (!in_queue_next[outs[j]])
           {
