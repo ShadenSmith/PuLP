@@ -1,5 +1,5 @@
 CXX?=g++
-CXXFLAGS?=-fopenmp -O3 -Wall -march=native
+CXXFLAGS?=-fopenmp -O3 -Wall -march=native -g
 
 all: pulp libpulp
 

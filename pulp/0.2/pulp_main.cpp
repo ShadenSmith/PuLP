@@ -210,6 +210,7 @@ int main(int argc, char **argv)
   double avg = 0.0;
 
   printf("Reading in %s ... ", graph_name);
+  fflush(stdout);
   elt = timer();
   read_graph(graph_name, n, m, out_array, out_degree_list,
              vertex_weights, edge_weights, vertex_weights_sum);
@@ -217,6 +218,7 @@ int main(int argc, char **argv)
                     vertex_weights, edge_weights, vertex_weights_sum};
   elt = timer() - elt;
   printf("... Done: %9.6lf\n", elt);
+  fflush(stdout);
 
   parts = new int[g.n];
   for (int i = 0; i < num_partitions; ++i)
