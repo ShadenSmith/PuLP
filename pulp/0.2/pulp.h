@@ -53,7 +53,7 @@
 #define WRITE_OUTPUT 1
 #define DO_EVAL 0
 #define THREAD_QUEUE_SIZE 2048
-#define QUEUE_MULTIPLIER 2
+#define QUEUE_MULTIPLIER 1
 
 //typedef int64_t32_t pulp_part_t;
 //typedef int64_t32_t pulp_vert_t;
