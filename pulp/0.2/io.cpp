@@ -84,7 +84,7 @@ void read_graph(char* filename, int64_t& n, int64_t& m,
 
   infile.open(filename);
   getline(infile, line); printf("%s\n", line.c_str());
-  sscanf(line.c_str(), "%lld %li %d", &n, &m, &format);
+  sscanf(line.c_str(), "%ld %li %d", &n, &m, &format);
   m *= 2;
   infile.close();
 
