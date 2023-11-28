@@ -218,16 +218,16 @@ void evaluate_quality(pulp_graph_t& g, int64_t num_parts, int64_t* parts)
   double comms_frac = 0.0;
 
   int64_t num_verts = g.n;
-  unsigned num_edges = g.m;
-  unsigned num_comms = 0;
+  uint64_t num_edges = g.m;
+  uint64_t num_comms = 0;
   bool** neighborhoods = new bool*[num_parts];
   bool** comms = new bool*[num_parts];
-  long* part_sizes = new long[num_parts];
+  int64_t* part_sizes = new int64_t[num_parts];
   int64_t* num_comms_out = new int64_t[num_parts];
-  long* edge_cuts = new long[num_parts];
+  int64_t* edge_cuts = new int64_t[num_parts];
   int64_t* boundary_verts = new int64_t[num_parts];
   bool** part_to_part = new bool*[num_parts];
-  unsigned* edges_per_part = new unsigned[num_parts];
+  uint64_t* edges_per_part = new uint64_t[num_parts];
   bool weighted = (g.vertex_weights_sum > 0);
 
   for (int64_t i = 0; i < num_parts; ++i)
@@ -306,14 +306,14 @@ void evaluate_quality(pulp_graph_t& g, int64_t num_parts, int64_t* parts)
         ++comms_frac;
   }
 
-  long quality = 0;
-  long edge_cut = 0;
-  long max_vert_size = 0;
-  unsigned max_edge_size = 0.0;
+  int64_t quality = 0;
+  int64_t edge_cut = 0;
+  int64_t max_vert_size = 0;
+  uint64_t max_edge_size = 0.0;
   int64_t max_comm_size = 0;
-  unsigned max_edge_cut = 0;
+  uint64_t max_edge_cut = 0;
   int64_t max_bound = 0;
-  unsigned num_bound = 0;
+  uint64_t num_bound = 0;
   for (int64_t i = 0; i < num_parts; ++i)
   {
 #if VERBOSE
@@ -339,24 +339,24 @@ void evaluate_quality(pulp_graph_t& g, int64_t num_parts, int64_t* parts)
 
   comms_frac = comms_frac / (double)(num_parts*(num_parts-1));
 
-  long avg_size_vert;
+  int64_t avg_size_vert;
   if (weighted) 
-    avg_size_vert = g.vertex_weights_sum / (long)num_parts;
+    avg_size_vert = g.vertex_weights_sum / (int64_t)num_parts;
   else 
-    avg_size_vert = num_verts / (unsigned)num_parts;
-  unsigned avg_size_edge = num_edges / (unsigned)num_parts;
-  unsigned avg_comm_size = num_comms / (unsigned)num_parts;
-  unsigned avg_edge_cut = edge_cut / (unsigned)num_parts;
-  unsigned avg_bound = num_bound / (unsigned)num_parts;
+    avg_size_vert = num_verts / (uint64_t)num_parts;
+  uint64_t avg_size_edge = num_edges / (uint64_t)num_parts;
+  uint64_t avg_comm_size = num_comms / (uint64_t)num_parts;
+  uint64_t avg_edge_cut = edge_cut / (uint64_t)num_parts;
+  uint64_t avg_bound = num_bound / (uint64_t)num_parts;
   double max_overweight_v = (double)max_vert_size/(double)avg_size_vert;
   double max_overweight_e = (double)max_edge_size/(double)avg_size_edge;
   double max_overweight_cv = (double)max_comm_size/(double)avg_comm_size;
   double max_overweight_ec = (double)max_edge_cut/(double)avg_edge_cut;
   double max_overweight_b = (double)max_bound/(double)avg_bound;
   edge_cut /= 2;
-  long unsigned comVol = (long unsigned)quality;
+  uint64_t comVol = (uint64_t)quality;
   double comVolRatio = (double)comVol / (double)(num_edges/2);
-  long unsigned edgeCut = (long unsigned)edge_cut;
+  uint64_t edgeCut = (uint64_t)edge_cut;
   double edgeCutRatio = (double)edgeCut / (double)(num_edges/2);
   double boundVertRatio = (double)num_bound / (double)(num_verts);
 

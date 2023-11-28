@@ -139,9 +139,9 @@ while(t < vert_outer_iter)
       for (int64_t p = 0; p < num_parts; ++p)
         part_counts[p] = 0.0;
 
-      unsigned out_degree = out_degree(g, v);
+      uint64_t out_degree = out_degree(g, v);
       int64_t* outs = out_vertices(g, v);
-      for (unsigned j = 0; j < out_degree; ++j)
+      for (uint64_t j = 0; j < out_degree; ++j)
       {
         int64_t out = outs[j];
         int64_t part_out = parts[out];
@@ -195,7 +195,7 @@ while(t < vert_outer_iter)
             thread_queue_size = 0;
           }
         }
-        for (unsigned j = 0; j < out_degree; ++j)
+        for (uint64_t j = 0; j < out_degree; ++j)
         {
           if (!in_queue_next[outs[j]])
           {
@@ -273,9 +273,9 @@ while(t < vert_outer_iter)
         part_counts[p] = 0;
 
       int64_t part = parts[v];
-      unsigned out_degree = out_degree(g, v);
+      uint64_t out_degree = out_degree(g, v);
       int64_t* outs = out_vertices(g, v);
-      for (unsigned j = 0; j < out_degree; ++j)
+      for (uint64_t j = 0; j < out_degree; ++j)
       {
         int64_t out = outs[j];
         int64_t part_out = parts[out];
@@ -319,7 +319,7 @@ while(t < vert_outer_iter)
               thread_queue_size = 0;
             }
           }
-          for (unsigned j = 0; j < out_degree; ++j) 
+          for (uint64_t j = 0; j < out_degree; ++j) 
           {
             if (!in_queue_next[outs[j]])
             {
@@ -432,7 +432,7 @@ void label_balance_verts_weighted(
   double vert_balance)
 {
   int64_t num_verts = g.n;
-  long* part_sizes = new long[num_parts];
+  int64_t* part_sizes = new int64_t[num_parts];
 
   bool has_vwgts = (g.vertex_weights != NULL);
   bool has_ewgts = (g.edge_weights != NULL);
@@ -458,7 +458,7 @@ void label_balance_verts_weighted(
 
 #pragma omp parallel
 {
-  long* part_sizes_thread = new long[num_parts];
+  int64_t* part_sizes_thread = new int64_t[num_parts];
   for (int64_t i = 0; i < num_parts; ++i) 
     part_sizes_thread[i] = 0;
 
@@ -522,10 +522,10 @@ while(t < vert_outer_iter)
       for (int64_t p = 0; p < num_parts; ++p)
         part_counts[p] = 0.0;
 
-      unsigned out_degree = out_degree(g, v);
+      uint64_t out_degree = out_degree(g, v);
       int64_t* outs = out_vertices(g, v);
       int64_t* weights = out_weights(g, v);
-      for (unsigned j = 0; j < out_degree; ++j)
+      for (uint64_t j = 0; j < out_degree; ++j)
       {
         int64_t out = outs[j];
         int64_t part_out = parts[out];
@@ -580,7 +580,7 @@ while(t < vert_outer_iter)
             thread_queue_size = 0;
           }
         }
-        for (unsigned j = 0; j < out_degree; ++j)
+        for (uint64_t j = 0; j < out_degree; ++j)
         {
           if (!in_queue_next[outs[j]])
           {
@@ -661,10 +661,10 @@ while(t < vert_outer_iter)
       for (int64_t p = 0; p < num_parts; ++p)
         part_counts[p] = 0;
 
-      unsigned out_degree = out_degree(g, v);
+      uint64_t out_degree = out_degree(g, v);
       int64_t* outs = out_vertices(g, v);
       int64_t* weights = out_weights(g, v);
-      for (unsigned j = 0; j < out_degree; ++j)
+      for (uint64_t j = 0; j < out_degree; ++j)
       {
         int64_t out = outs[j];
         int64_t part_out = parts[out];
@@ -710,7 +710,7 @@ while(t < vert_outer_iter)
               thread_queue_size = 0;
             }
           }
-          for (unsigned j = 0; j < out_degree; ++j) 
+          for (uint64_t j = 0; j < out_degree; ++j) 
           {
             if (!in_queue_next[outs[j]])
             {

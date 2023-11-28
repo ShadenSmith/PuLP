@@ -64,7 +64,7 @@ int64_t* init_nonrandom(pulp_graph_t& g, int64_t num_parts, int64_t* parts)
   int64_t thread_start;
 
   xs1024star_t xs;
-  xs1024star_seed((unsigned long)(seed + omp_get_thread_num()), &xs);
+  xs1024star_seed((uint64_t)(seed + omp_get_thread_num()), &xs);
 
 #pragma omp for
   for (int64_t i = 0; i < num_verts; ++i)
@@ -88,9 +88,9 @@ int64_t* init_nonrandom(pulp_graph_t& g, int64_t num_parts, int64_t* parts)
     {
       int64_t vert = queue[i];
       int64_t part = parts[vert];
-      long out_degree = out_degree(g, vert);
+      int64_t out_degree = out_degree(g, vert);
       int64_t* outs = out_vertices(g, vert);
-      for (long j = 0; j < out_degree; ++j)
+      for (int64_t j = 0; j < out_degree; ++j)
       {
         int64_t out = outs[j];
         if (parts[out] == -1)
@@ -135,7 +135,7 @@ int64_t* init_nonrandom(pulp_graph_t& g, int64_t num_parts, int64_t* parts)
 #pragma omp for
   for (int64_t i = 0; i < num_verts; ++i)
     if (parts[i] < 0)
-      parts[i] = (unsigned)xs1024star_next(&xs) % num_parts;
+      parts[i] = (uint64_t)xs1024star_next(&xs) % num_parts;
 } // end parallel
   
 #if OUTPUT_STEP
@@ -171,7 +171,7 @@ int64_t* init_nonrandom_constrained(pulp_graph_t& g, int64_t num_parts, int64_t*
   int64_t thread_start;
 
   xs1024star_t xs;
-  xs1024star_seed((unsigned long)(seed + omp_get_thread_num()), &xs);
+  xs1024star_seed((uint64_t)(seed + omp_get_thread_num()), &xs);
 
 #pragma omp for
   for (int64_t i = 0; i < num_verts; ++i)
@@ -196,9 +196,9 @@ int64_t* init_nonrandom_constrained(pulp_graph_t& g, int64_t num_parts, int64_t*
     {
       int64_t vert = queue[i];
       int64_t part = parts[vert];
-      long out_degree = out_degree(g, vert);
+      int64_t out_degree = out_degree(g, vert);
       int64_t* outs = out_vertices(g, vert);
-      for (long j = 0; j < out_degree; ++j)
+      for (int64_t j = 0; j < out_degree; ++j)
       {
         int64_t out = outs[j];
         if (parts[out] == -1)
@@ -249,7 +249,7 @@ int64_t* init_nonrandom_constrained(pulp_graph_t& g, int64_t num_parts, int64_t*
 #pragma omp for
   for (int64_t i = 0; i < num_verts; ++i)
     if (parts[i] == -1)
-      parts[i] = (int64_t)((unsigned)xs1024star_next(&xs) % (unsigned)num_parts);
+      parts[i] = (int64_t)((uint64_t)xs1024star_next(&xs) % (uint64_t)num_parts);
 
 } // end parallel
   

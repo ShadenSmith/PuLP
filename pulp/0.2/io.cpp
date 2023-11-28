@@ -1,15 +1,15 @@
 
-void read_adj(char* filename, int64_t& n, long& m,
-  int64_t*& out_array, long*& out_degree_list,
+void read_adj(char* filename, int64_t& n, int64_t& m,
+  int64_t*& out_array, int64_t*& out_degree_list,
   bool has_vert_weights, bool has_edge_weights,
-  int64_t*& vertex_weights, int64_t*& edge_weights, long& vertex_weights_sum)
+  int64_t*& vertex_weights, int64_t*& edge_weights, int64_t& vertex_weights_sum)
 {
   ifstream infile;
   string line;
   string val;
 
   out_array = new int64_t[m];
-  out_degree_list = new long[n+1];
+  out_degree_list = new int64_t[n+1];
   if (has_vert_weights || has_edge_weights) vertex_weights = new int64_t[n];
   else vertex_weights = NULL;
   if (has_edge_weights || has_vert_weights) edge_weights = new int64_t[m];
@@ -20,7 +20,7 @@ void read_adj(char* filename, int64_t& n, long& m,
   for (int64_t i = 0; i < n+1; ++i)
     out_degree_list[i] = 0;
 
-  long count = 0;
+  int64_t count = 0;
   int64_t cur_vert = 0;
 
   infile.open(filename);
@@ -74,9 +74,9 @@ void read_adj(char* filename, int64_t& n, long& m,
   infile.close();  
 }
 
-void read_graph(char* filename, int64_t& n, long& m,
-  int64_t*& out_array, long*& out_degree_list,
-  int64_t*& vertex_weights, int64_t*& edge_weights, long& vertex_weights_sum)
+void read_graph(char* filename, int64_t& n, int64_t& m,
+  int64_t*& out_array, int64_t*& out_degree_list,
+  int64_t*& vertex_weights, int64_t*& edge_weights, int64_t& vertex_weights_sum)
 {
   ifstream infile;
   string line;

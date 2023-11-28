@@ -80,13 +80,13 @@ int64_t* label_prop(pulp_graph_t& g, int64_t num_parts, int64_t* parts,
 #pragma omp parallel
 {
   xs1024star_t xs;
-  xs1024star_seed((unsigned long)(seed + omp_get_thread_num()), &xs);
+  xs1024star_seed((uint64_t)(seed + omp_get_thread_num()), &xs);
 
 #pragma omp for
   for (int64_t i = 0; i < num_verts; ++i)
-    parts[i] = (int64_t)((unsigned)xs1024star_next(&xs) % (unsigned)num_parts);
+    parts[i] = (int64_t)((uint64_t)xs1024star_next(&xs) % (uint64_t)num_parts);
   
-  long* part_sizes_thread = new long[num_parts];
+  int64_t* part_sizes_thread = new int64_t[num_parts];
   for (int64_t i = 0; i < num_parts; ++i) 
     part_sizes_thread[i] = 0;
 
@@ -125,9 +125,9 @@ int64_t* label_prop(pulp_graph_t& g, int64_t num_parts, int64_t* parts,
       for (int64_t j = 0; j < num_parts; ++j)
         part_counts[j] = 0;
 
-      unsigned v_degree = out_degree(g, v);
+      uint64_t v_degree = out_degree(g, v);
       int64_t* outs = out_vertices(g, v);
-      for (unsigned j = 0; j < v_degree; ++j)
+      for (uint64_t j = 0; j < v_degree; ++j)
       {
         int64_t out = outs[j];
         int64_t part = parts[out];
@@ -194,7 +194,7 @@ int64_t* label_prop(pulp_graph_t& g, int64_t num_parts, int64_t* parts,
             thread_queue_size = 0;
           }
         }
-        for (unsigned j = 0; j < v_degree; ++j)
+        for (uint64_t j = 0; j < v_degree; ++j)
         {
           if (!in_queue_next[outs[j]])
           {
@@ -286,14 +286,14 @@ int64_t* label_prop_weighted(pulp_graph_t& g, int64_t num_parts, int64_t* parts,
 #pragma omp parallel
 {
   xs1024star_t xs;
-  xs1024star_seed((unsigned long)(seed + omp_get_thread_num()), &xs);
+  xs1024star_seed((uint64_t)(seed + omp_get_thread_num()), &xs);
 
 #pragma omp for
   for (int64_t i = 0; i < num_verts; ++i) {
     parts[i] = (int64_t)(xs1024star_next(&xs) % (uint64_t)num_parts);
   }
 
-  long* part_sizes_thread = new long[num_parts];
+  int64_t* part_sizes_thread = new int64_t[num_parts];
   for (int64_t i = 0; i < num_parts; ++i) 
     part_sizes_thread[i] = 0;
 
@@ -337,10 +337,10 @@ int64_t* label_prop_weighted(pulp_graph_t& g, int64_t num_parts, int64_t* parts,
       for (int64_t j = 0; j < num_parts; ++j)
         part_counts[j] = 0;
 
-      unsigned v_degree = out_degree(g, v);
+      uint64_t v_degree = out_degree(g, v);
       int64_t* outs = out_vertices(g, v);
       int64_t* weights = out_weights(g, v);
-      for (unsigned j = 0; j < v_degree; ++j)
+      for (uint64_t j = 0; j < v_degree; ++j)
       {
         int64_t out = outs[j];
         int64_t part_out = parts[out];
@@ -412,7 +412,7 @@ int64_t* label_prop_weighted(pulp_graph_t& g, int64_t num_parts, int64_t* parts,
             thread_queue_size = 0;
           }
         }
-        for (unsigned j = 0; j < v_degree; ++j)
+        for (uint64_t j = 0; j < v_degree; ++j)
         {
           if (!in_queue_next[outs[j]])
           {

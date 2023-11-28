@@ -102,11 +102,11 @@ int main(int argc, char **argv)
   }
 
   int64_t n = 0;
-  long m = 0;
+  int64_t m = 0;
   int64_t *out_array = NULL;
-  long *out_degree_list = NULL;
+  int64_t *out_degree_list = NULL;
   int64_t *vertex_weights = NULL;
-  long vertex_weights_sum = 0;
+  int64_t vertex_weights_sum = 0;
   int64_t *edge_weights = NULL;
   char *graph_name = NULL;    // = strdup(argv[1]);
   char *num_parts_str = NULL; // = strdup(argv[2]);

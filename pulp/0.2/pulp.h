@@ -60,12 +60,12 @@
 
 typedef struct {
   int64_t n;
-  long m;
+  int64_t m;
   int64_t* out_array;
-  long* out_degree_list;
+  int64_t* out_degree_list;
   int64_t* vertex_weights;
   int64_t* edge_weights;
-  long vertex_weights_sum;
+  int64_t vertex_weights_sum;
 } pulp_graph_t;
 #define out_degree(g, n) (g.out_degree_list[n+1] - g.out_degree_list[n])
 #define out_vertices(g, n) &g.out_array[g.out_degree_list[n]]
