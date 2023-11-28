@@ -55,16 +55,16 @@
 #define THREAD_QUEUE_SIZE 2048
 #define QUEUE_MULTIPLIER 2
 
-//typedef int32_t pulp_part_t;
-//typedef int32_t pulp_vert_t;
+//typedef int64_t32_t pulp_part_t;
+//typedef int64_t32_t pulp_vert_t;
 
 typedef struct {
-  int n;
+  int64_t n;
   long m;
-  int* out_array;
+  int64_t* out_array;
   long* out_degree_list;
-  int* vertex_weights;
-  int* edge_weights;
+  int64_t* vertex_weights;
+  int64_t* edge_weights;
   long vertex_weights_sum;
 } pulp_graph_t;
 #define out_degree(g, n) (g.out_degree_list[n+1] - g.out_degree_list[n])
@@ -84,16 +84,16 @@ typedef struct {
 
   bool verbose_output;
 
-  int pulp_seed;
+  int64_t pulp_seed;
 } pulp_part_control_t;
 
 
-extern "C" int pulp_run(pulp_graph_t* g, pulp_part_control_t* ppc, 
-          int* parts, int num_parts);
+extern "C" int64_t pulp_run(pulp_graph_t* g, pulp_part_control_t* ppc, 
+          int64_t* parts, int64_t num_parts);
 
 double timer();
 
-void evaluate_quality(pulp_graph_t& g, int num_parts, int* parts);
+void evaluate_quality(pulp_graph_t& g, int64_t num_parts, int64_t* parts);
 
 
 #endif

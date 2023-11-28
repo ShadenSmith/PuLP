@@ -61,8 +61,8 @@
 
 int seed;
 
-extern "C" int pulp_run(pulp_graph_t* g, pulp_part_control_t* ppc, 
-          int* parts, int num_parts)
+extern "C" int64_t pulp_run(pulp_graph_t* g, pulp_part_control_t* ppc, 
+          int64_t* parts, int64_t num_parts)
 {
   srand(time(0));
   double vert_balance = ppc->vert_balance;
@@ -74,14 +74,14 @@ extern "C" int pulp_run(pulp_graph_t* g, pulp_part_control_t* ppc,
   bool do_vert_balance = true;
   bool do_edge_balance = ppc->do_edge_balance;
   bool do_maxcut_balance = ppc->do_maxcut_balance;
-  int balance_outer_iter = 1;
-  int label_prop_iter = 3;
-  int vert_outer_iter = 3;
-  int vert_balance_iter = 5;
-  int vert_refine_iter = 10;
-  int edge_outer_iter = 3;
-  int edge_balance_iter = 5;
-  int edge_refine_iter = 10;
+  int64_t balance_outer_iter = 1;
+  int64_t label_prop_iter = 3;
+  int64_t vert_outer_iter = 3;
+  int64_t vert_balance_iter = 5;
+  int64_t vert_refine_iter = 10;
+  int64_t edge_outer_iter = 3;
+  int64_t edge_balance_iter = 5;
+  int64_t edge_refine_iter = 10;
   seed = ppc->pulp_seed;
 
   double elt, elt2, elt3;
@@ -206,7 +206,7 @@ double timer()
 }
 
 
-void evaluate_quality(pulp_graph_t& g, int num_parts, int* parts)
+void evaluate_quality(pulp_graph_t& g, int64_t num_parts, int64_t* parts)
 {
   for (int i = 0; i < g.n; ++i)
     if (parts[i] < 0)
@@ -217,15 +217,15 @@ void evaluate_quality(pulp_graph_t& g, int num_parts, int* parts)
 
   double comms_frac = 0.0;
 
-  int num_verts = g.n;
+  int64_t num_verts = g.n;
   unsigned num_edges = g.m;
   unsigned num_comms = 0;
   bool** neighborhoods = new bool*[num_parts];
   bool** comms = new bool*[num_parts];
   long* part_sizes = new long[num_parts];
-  int* num_comms_out = new int[num_parts];
+  int64_t* num_comms_out = new int64_t[num_parts];
   long* edge_cuts = new long[num_parts];
-  int* boundary_verts = new int[num_parts];
+  int64_t* boundary_verts = new int64_t[num_parts];
   bool** part_to_part = new bool*[num_parts];
   unsigned* edges_per_part = new unsigned[num_parts];
   bool weighted = (g.vertex_weights_sum > 0);
@@ -258,21 +258,21 @@ void evaluate_quality(pulp_graph_t& g, int num_parts, int* parts)
     else
       ++part_sizes[parts[v]];
 
-    int part = parts[v];
+    int64_t part = parts[v];
     neighborhoods[part][v] = true;
     bool boundary = false;
 
-    int out_degree = out_degree(g, v);
-    int* outs = out_vertices(g, v);
-    int* weights;
+    int64_t out_degree = out_degree(g, v);
+    int64_t* outs = out_vertices(g, v);
+    int64_t* weights;
     if (weighted)
       weights = out_weights(g, v);
     for (int j = 0; j < out_degree; ++j)
     {
-      int out = outs[j];
+      int64_t out = outs[j];
       neighborhoods[part][out] = true;
 
-      int out_part = parts[out];
+      int64_t out_part = parts[out];
       if (out_part != part)
       {
         comms[part][out] = true;
@@ -310,9 +310,9 @@ void evaluate_quality(pulp_graph_t& g, int num_parts, int* parts)
   long edge_cut = 0;
   long max_vert_size = 0;
   unsigned max_edge_size = 0.0;
-  int max_comm_size = 0;
+  int64_t max_comm_size = 0;
   unsigned max_edge_cut = 0;
-  int max_bound = 0;
+  int64_t max_bound = 0;
   unsigned num_bound = 0;
   for (int i = 0; i < num_parts; ++i)
   {

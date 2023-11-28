@@ -1,18 +1,18 @@
 
-void read_adj(char* filename, int& n, long& m,
-  int*& out_array, long*& out_degree_list,
+void read_adj(char* filename, int64_t& n, long& m,
+  int64_t*& out_array, long*& out_degree_list,
   bool has_vert_weights, bool has_edge_weights,
-  int*& vertex_weights, int*& edge_weights, long& vertex_weights_sum)
+  int64_t*& vertex_weights, int64_t*& edge_weights, long& vertex_weights_sum)
 {
   ifstream infile;
   string line;
   string val;
 
-  out_array = new int[m];
+  out_array = new int64_t[m];
   out_degree_list = new long[n+1];
-  if (has_vert_weights || has_edge_weights) vertex_weights = new int[n];
+  if (has_vert_weights || has_edge_weights) vertex_weights = new int64_t[n];
   else vertex_weights = NULL;
-  if (has_edge_weights || has_vert_weights) edge_weights = new int[m];
+  if (has_edge_weights || has_vert_weights) edge_weights = new int64_t[m];
   else edge_weights = NULL;
   vertex_weights_sum = 0;
 
@@ -21,7 +21,7 @@ void read_adj(char* filename, int& n, long& m,
     out_degree_list[i] = 0;
 
   long count = 0;
-  int cur_vert = 0;
+  int64_t cur_vert = 0;
 
   infile.open(filename);
   getline(infile, line);
@@ -74,13 +74,13 @@ void read_adj(char* filename, int& n, long& m,
   infile.close();  
 }
 
-void read_graph(char* filename, int& n, long& m,
-  int*& out_array, long*& out_degree_list,
-  int*& vertex_weights, int*& edge_weights, long& vertex_weights_sum)
+void read_graph(char* filename, int64_t& n, long& m,
+  int64_t*& out_array, long*& out_degree_list,
+  int64_t*& vertex_weights, int64_t*& edge_weights, long& vertex_weights_sum)
 {
   ifstream infile;
   string line;
-  int format = 0;
+  int64_t format = 0;
 
   infile.open(filename);
   getline(infile, line); printf("%s\n", line.c_str());
@@ -107,7 +107,7 @@ void read_graph(char* filename, int& n, long& m,
 }
 
 
-void read_parts(char* filename, int num_verts, int* parts)
+void read_parts(char* filename, int64_t num_verts, int64_t* parts)
 {
   ifstream infile;
   string line;
@@ -122,7 +122,7 @@ void read_parts(char* filename, int num_verts, int* parts)
   infile.close();
 }
 
-void write_parts(char* filename, int num_verts, int* parts)
+void write_parts(char* filename, int64_t num_verts, int64_t* parts)
 {
   ofstream outfile;
   outfile.open(filename);

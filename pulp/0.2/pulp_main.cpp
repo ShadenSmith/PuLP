@@ -76,7 +76,7 @@ void print_usage_full(char **argv)
   printf("\t-i [file]:\n");
   printf("\t\tInput parts file [default: none]\n");
   printf("\t-s [seed]:\n");
-  printf("\t\tSet seed integer [default: random int]\n");
+  printf("\t\tSet seed int64_teger [default: random int64_t]\n");
   exit(0);
 }
 
@@ -101,18 +101,18 @@ int main(int argc, char **argv)
     exit(0);
   }
 
-  int n = 0;
+  int64_t n = 0;
   long m = 0;
-  int *out_array = NULL;
+  int64_t *out_array = NULL;
   long *out_degree_list = NULL;
-  int *vertex_weights = NULL;
+  int64_t *vertex_weights = NULL;
   long vertex_weights_sum = 0;
-  int *edge_weights = NULL;
+  int64_t *edge_weights = NULL;
   char *graph_name = NULL;    // = strdup(argv[1]);
   char *num_parts_str = NULL; // = strdup(argv[2]);
-  int num_parts = 0;
-  int *parts = NULL;
-  int num_partitions = 1;
+  int64_t num_parts = 0;
+  int64_t *parts = NULL;
+  int64_t num_partitions = 1;
 
   double vert_balance = 1.10;
   double edge_balance = 1.50;
@@ -126,11 +126,11 @@ int main(int argc, char **argv)
   bool do_edge_balance = false;
   bool do_maxcut_balance = false;
   bool eval_quality = false;
-  int pulp_seed = rand();
+  int64_t pulp_seed = rand();
 
   opterr = 0;
 
-  int c;
+  int64_t c;
   while ((c = getopt(argc, argv, "v:e:i:o:cs:lm:q")) != -1)
   {
     fprintf(stderr, "parsing arg: %c\n", (char)c);
@@ -220,7 +220,7 @@ int main(int argc, char **argv)
   printf("... Done: %9.6lf\n", elt);
   fflush(stdout);
 
-  parts = new int[g.n];
+  parts = new int64_t[g.n];
   for (int i = 0; i < num_partitions; ++i)
   {
     if (strlen(parts_in) != 0)

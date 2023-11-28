@@ -46,7 +46,7 @@
 
 using namespace std;
 
-extern int seed;
+extern int64_t seed;
 
 /*
 '########::'########:::'#######::'########::
@@ -58,21 +58,21 @@ extern int seed;
  ##:::::::: ##:::. ##:. #######:: ##::::::::
 ..:::::::::..:::::..:::.......:::..:::::::::
 */
-int* label_prop(pulp_graph_t& g, int num_parts, int* parts,
-  int label_prop_iter, double balance_vert_lower)
+int* label_prop(pulp_graph_t& g, int64_t num_parts, int64_t* parts,
+  int64_t label_prop_iter, double balance_vert_lower)
 {
-  int num_verts = g.n;
-  int* part_sizes = new int[num_parts];
+  int64_t num_verts = g.n;
+  int64_t* part_sizes = new int64_t[num_parts];
   for (int i = 0; i < num_parts; ++i)
     part_sizes[i] = 0;
 
-  int num_changes;
-  int* queue = new int[num_verts*QUEUE_MULTIPLIER];
-  int* queue_next = new int[num_verts*QUEUE_MULTIPLIER];
+  int64_t num_changes;
+  int64_t* queue = new int64_t[num_verts*QUEUE_MULTIPLIER];
+  int64_t* queue_next = new int64_t[num_verts*QUEUE_MULTIPLIER];
   bool* in_queue = new bool[num_verts];
   bool* in_queue_next = new bool[num_verts];
-  int queue_size = num_verts;
-  int next_size = 0;
+  int64_t queue_size = num_verts;
+  int64_t next_size = 0;
 
   double avg_size = (double)num_verts / (double)num_parts;
   double min_size = avg_size * balance_vert_lower;
@@ -108,10 +108,10 @@ int* label_prop(pulp_graph_t& g, int num_parts, int* parts,
   for (int i = 0; i < num_verts; ++i)
     in_queue_next[i] = false;
 
-  int* part_counts = new int[num_parts];
-  int thread_queue[ THREAD_QUEUE_SIZE ];
-  int thread_queue_size = 0;
-  int thread_start;
+  int64_t* part_counts = new int64_t[num_parts];
+  int64_t thread_queue[ THREAD_QUEUE_SIZE ];
+  int64_t thread_queue_size = 0;
+  int64_t thread_start;
 
   for (int num_iter = 0; num_iter < label_prop_iter; ++num_iter)
   { 
@@ -120,24 +120,24 @@ int* label_prop(pulp_graph_t& g, int num_parts, int* parts,
 #pragma omp for schedule(guided) reduction(+:num_changes)
     for (int i = 0; i < queue_size; ++i)
     {
-      int v = queue[i];
+      int64_t v = queue[i];
       in_queue[v] = false;
       for (int j = 0; j < num_parts; ++j)
         part_counts[j] = 0;
 
       unsigned v_degree = out_degree(g, v);
-      int* outs = out_vertices(g, v);
+      int64_t* outs = out_vertices(g, v);
       for (unsigned j = 0; j < v_degree; ++j)
       {
-        int out = outs[j];
-        int part = parts[out];
+        int64_t out = outs[j];
+        int64_t part = parts[out];
         part_counts[part] += out_degree(g, out);
       }
       
-      int part = parts[v];
-      int max_count = -1;
-      int max_part = -1;
-      int num_max = 0;
+      int64_t part = parts[v];
+      int64_t max_count = -1;
+      int64_t max_part = -1;
+      int64_t num_max = 0;
       for (int p = 0; p < num_parts; ++p)
       {
         if (part_counts[p] == max_count && 
@@ -156,7 +156,7 @@ int* label_prop(pulp_graph_t& g, int num_parts, int* parts,
       }
 
       if (num_max > 1) {
-        int rand_val;
+        int64_t rand_val;
 
         // TODO: thread-local RNG
         #pragma omp critical
@@ -232,7 +232,7 @@ int* label_prop(pulp_graph_t& g, int num_parts, int* parts,
     printf("%d\n", next_size);
 #endif
 
-    int* temp = queue;
+    int64_t* temp = queue;
     queue = queue_next;
     queue_next = temp;
     bool* temp_b = in_queue;
@@ -260,25 +260,25 @@ int* label_prop(pulp_graph_t& g, int num_parts, int* parts,
 }
 
 
-int* label_prop_weighted(pulp_graph_t& g, int num_parts, int* parts,
-  int label_prop_iter, double balance_vert_lower)
+int* label_prop_weighted(pulp_graph_t& g, int64_t num_parts, int64_t* parts,
+  int64_t label_prop_iter, double balance_vert_lower)
 {
-  int num_verts = g.n;  
+  int64_t num_verts = g.n;  
   bool has_vwgts = (g.vertex_weights != NULL);
   bool has_ewgts = (g.edge_weights != NULL);
   if (!has_vwgts) g.vertex_weights_sum = g.n;
 
-  int* part_sizes = new int[num_parts];
+  int64_t* part_sizes = new int64_t[num_parts];
   for (int i = 0; i < num_parts; ++i)
     part_sizes[i] = 0;
 
-  int num_changes;
-  int* queue = new int[num_verts*QUEUE_MULTIPLIER];
-  int* queue_next = new int[num_verts*QUEUE_MULTIPLIER];
+  int64_t num_changes;
+  int64_t* queue = new int64_t[num_verts*QUEUE_MULTIPLIER];
+  int64_t* queue_next = new int64_t[num_verts*QUEUE_MULTIPLIER];
   bool* in_queue = new bool[num_verts];
   bool* in_queue_next = new bool[num_verts];
-  int queue_size = num_verts;
-  int next_size = 0;
+  int64_t queue_size = num_verts;
+  int64_t next_size = 0;
 
   double avg_size = (double)g.vertex_weights_sum / (double)num_parts;
   double min_size = avg_size * balance_vert_lower;
@@ -317,10 +317,10 @@ int* label_prop_weighted(pulp_graph_t& g, int num_parts, int* parts,
   for (int i = 0; i < num_verts; ++i)
     in_queue_next[i] = false;
 
-  int* part_counts = new int[num_parts];
-  int thread_queue[ THREAD_QUEUE_SIZE ];
-  int thread_queue_size = 0;
-  int thread_start;
+  int64_t* part_counts = new int64_t[num_parts];
+  int64_t thread_queue[ THREAD_QUEUE_SIZE ];
+  int64_t thread_queue_size = 0;
+  int64_t thread_start;
 
   for (int num_iter = 0; num_iter < label_prop_iter; ++num_iter)
   { 
@@ -329,8 +329,8 @@ int* label_prop_weighted(pulp_graph_t& g, int num_parts, int* parts,
 #pragma omp for schedule(guided) reduction(+:num_changes)
     for (int i = 0; i < queue_size; ++i)
     {
-      int v = queue[i];
-      int v_weight = 1;
+      int64_t v = queue[i];
+      int64_t v_weight = 1;
       if (has_vwgts) v_weight = g.vertex_weights[v];
 
       in_queue[v] = false;
@@ -338,12 +338,12 @@ int* label_prop_weighted(pulp_graph_t& g, int num_parts, int* parts,
         part_counts[j] = 0;
 
       unsigned v_degree = out_degree(g, v);
-      int* outs = out_vertices(g, v);
-      int* weights = out_weights(g, v);
+      int64_t* outs = out_vertices(g, v);
+      int64_t* weights = out_weights(g, v);
       for (unsigned j = 0; j < v_degree; ++j)
       {
-        int out = outs[j];
-        int part_out = parts[out];
+        int64_t out = outs[j];
+        int64_t part_out = parts[out];
         double weight_out = 1.0;
         if (has_ewgts) weight_out = (double)weights[j];
 
@@ -357,10 +357,10 @@ int* label_prop_weighted(pulp_graph_t& g, int num_parts, int* parts,
         part_counts[part_out] += ((double)out_degree(g, out))*weight_out;
       }
       
-      int part = parts[v];
-      int max_count = -1;
-      int max_part = -1;
-      int num_max = 0;
+      int64_t part = parts[v];
+      int64_t max_count = -1;
+      int64_t max_part = -1;
+      int64_t num_max = 0;
       for (int p = 0; p < num_parts; ++p)
       {
         if (part_counts[p] == max_count)
@@ -450,7 +450,7 @@ int* label_prop_weighted(pulp_graph_t& g, int num_parts, int* parts,
     printf("%d\n", next_size);
 #endif
 
-    int* temp = queue;
+    int64_t* temp = queue;
     queue = queue_next;
     queue_next = temp;
     bool* temp_b = in_queue;
