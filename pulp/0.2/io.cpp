@@ -17,7 +17,7 @@ void read_adj(char* filename, int64_t& n, long& m,
   vertex_weights_sum = 0;
 
 #pragma omp parallel for
-  for (int i = 0; i < n+1; ++i)
+  for (int64_t i = 0; i < n+1; ++i)
     out_degree_list[i] = 0;
 
   long count = 0;
@@ -80,11 +80,11 @@ void read_graph(char* filename, int64_t& n, long& m,
 {
   ifstream infile;
   string line;
-  int64_t format = 0;
+  int format = 0;
 
   infile.open(filename);
   getline(infile, line); printf("%s\n", line.c_str());
-  sscanf(line.c_str(), "%d %li %d", &n, &m, &format);
+  sscanf(line.c_str(), "%lld %li %d", &n, &m, &format);
   m *= 2;
   infile.close();
 
@@ -113,7 +113,7 @@ void read_parts(char* filename, int64_t num_verts, int64_t* parts)
   string line;
   infile.open(filename);
 
-  for (int i = 0; i < num_verts; ++i)
+  for (int64_t i = 0; i < num_verts; ++i)
   {
     getline(infile, line);
     parts[i] = atoi(line.c_str());
@@ -127,7 +127,7 @@ void write_parts(char* filename, int64_t num_verts, int64_t* parts)
   ofstream outfile;
   outfile.open(filename);
 
-  for (int i = 0; i < num_verts; ++i)
+  for (int64_t i = 0; i < num_verts; ++i)
     outfile << parts[i] << endl;
 
   outfile.close();

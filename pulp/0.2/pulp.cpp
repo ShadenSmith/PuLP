@@ -59,7 +59,7 @@
 #include "label_balance_edges.cpp"
 #include "label_balance_edges_maxcut.cpp"
 
-int seed;
+int64_t seed;
 
 extern "C" int64_t pulp_run(pulp_graph_t* g, pulp_part_control_t* ppc, 
           int64_t* parts, int64_t num_parts)
@@ -90,7 +90,7 @@ extern "C" int64_t pulp_run(pulp_graph_t* g, pulp_part_control_t* ppc,
   if (do_label_prop && 
         g->vertex_weights == NULL && g->edge_weights == NULL)
   {
-    if (verbose) printf("\tDoing label prop stage with %d parts\n", num_parts);
+    if (verbose) printf("\tDoing label prop stage with %lld parts\n", num_parts);
     elt2 = timer();
     label_prop(*g, num_parts, parts, label_prop_iter, vert_balance_lower);
     elt2 = timer() - elt2;
@@ -99,7 +99,7 @@ extern "C" int64_t pulp_run(pulp_graph_t* g, pulp_part_control_t* ppc,
   else if (do_label_prop && 
            (g->vertex_weights != NULL || g->edge_weights != NULL))
   {
-    if (verbose) printf("\tDoing (weighted) label prop stage with %d parts\n", num_parts);
+    if (verbose) printf("\tDoing (weighted) label prop stage with %lld parts\n", num_parts);
     elt2 = timer();
     label_prop_weighted(*g, num_parts, parts, 
       label_prop_iter, vert_balance_lower);
@@ -108,7 +108,7 @@ extern "C" int64_t pulp_run(pulp_graph_t* g, pulp_part_control_t* ppc,
   }
   else if (do_nonrandom_init)
   {
-    if (verbose) printf("\tDoing bfs init stage with %d parts\n", num_parts);
+    if (verbose) printf("\tDoing bfs init stage with %lld parts\n", num_parts);
     elt2 = timer();
     init_nonrandom(*g, num_parts, parts);
     elt2 = timer() - elt2;
@@ -117,7 +117,7 @@ extern "C" int64_t pulp_run(pulp_graph_t* g, pulp_part_control_t* ppc,
 
 
   if (verbose) printf("\tBeginning vertex (and edge) refinement\n");
-  for (int boi = 0; boi < balance_outer_iter; ++boi)
+  for (int64_t boi = 0; boi < balance_outer_iter; ++boi)
   {
     elt2 = timer();
     if (do_vert_balance && 
@@ -188,7 +188,7 @@ extern "C" int64_t pulp_run(pulp_graph_t* g, pulp_part_control_t* ppc,
     }
 
     elt2 = timer() - elt2;
-    if (verbose) printf("\tFinished outer loop iter %d: %9.6lf(s)\n", (boi+1), elt2);
+    if (verbose) printf("\tFinished outer loop iter %lld: %9.6lf(s)\n", (boi+1), elt2);
   }
 
   elt = timer() - elt;
@@ -208,10 +208,10 @@ double timer()
 
 void evaluate_quality(pulp_graph_t& g, int64_t num_parts, int64_t* parts)
 {
-  for (int i = 0; i < g.n; ++i)
+  for (int64_t i = 0; i < g.n; ++i)
     if (parts[i] < 0)
     {
-      printf("invalid part: %d %d\n", i, parts[i]);
+      printf("invalid part: %lld %lld\n", i, parts[i]);
       exit(0);
     }
 
@@ -230,7 +230,7 @@ void evaluate_quality(pulp_graph_t& g, int64_t num_parts, int64_t* parts)
   unsigned* edges_per_part = new unsigned[num_parts];
   bool weighted = (g.vertex_weights_sum > 0);
 
-  for (int i = 0; i < num_parts; ++i)
+  for (int64_t i = 0; i < num_parts; ++i)
   {
     part_sizes[i] = 0;
     num_comms_out[i] = 0;
@@ -240,18 +240,18 @@ void evaluate_quality(pulp_graph_t& g, int64_t num_parts, int64_t* parts)
 
     neighborhoods[i] = new bool[num_verts];
     comms[i] = new bool[num_verts];
-    for (int j = 0; j < num_verts; ++j)
+    for (int64_t j = 0; j < num_verts; ++j)
     {
       neighborhoods[i][j] = false;
       comms[i][j] = false;
     }
 
     part_to_part[i] = new bool[num_parts];
-    for (int j = 0; j < num_parts; ++j)
+    for (int64_t j = 0; j < num_parts; ++j)
       part_to_part[i][j] = false;
   }
 
-  for (int v = 0; v < num_verts; ++v)
+  for (int64_t v = 0; v < num_verts; ++v)
   { 
     if (weighted)
       part_sizes[parts[v]] += g.vertex_weights[v];
@@ -267,7 +267,7 @@ void evaluate_quality(pulp_graph_t& g, int64_t num_parts, int64_t* parts)
     int64_t* weights;
     if (weighted)
       weights = out_weights(g, v);
-    for (int j = 0; j < out_degree; ++j)
+    for (int64_t j = 0; j < out_degree; ++j)
     {
       int64_t out = outs[j];
       neighborhoods[part][out] = true;
@@ -291,9 +291,9 @@ void evaluate_quality(pulp_graph_t& g, int64_t num_parts, int64_t* parts)
       ++boundary_verts[part];
   }
 
-  for (int i = 0; i < num_parts; ++i)
+  for (int64_t i = 0; i < num_parts; ++i)
   {
-    for (int j = 0; j < num_verts; ++j)
+    for (int64_t j = 0; j < num_verts; ++j)
     {
       if (comms[i][j])
       {
@@ -301,7 +301,7 @@ void evaluate_quality(pulp_graph_t& g, int64_t num_parts, int64_t* parts)
         ++num_comms;
       }
     }
-    for (int j = 0; j < num_parts; ++j)
+    for (int64_t j = 0; j < num_parts; ++j)
       if (part_to_part[i][j])
         ++comms_frac;
   }
@@ -314,10 +314,10 @@ void evaluate_quality(pulp_graph_t& g, int64_t num_parts, int64_t* parts)
   unsigned max_edge_cut = 0;
   int64_t max_bound = 0;
   unsigned num_bound = 0;
-  for (int i = 0; i < num_parts; ++i)
+  for (int64_t i = 0; i < num_parts; ++i)
   {
 #if VERBOSE
-    printf("p: %d, v: %li, e: %u, com: %d, cut: %li, bound: %d\n", 
+    printf("p: %lld, v: %li, e: %llu, com: %lld, cut: %li, bound: %lld\n", 
       i, part_sizes[i], 
       edges_per_part[i], num_comms_out[i], edge_cuts[i], boundary_verts[i]);
 #endif
@@ -370,10 +370,10 @@ void evaluate_quality(pulp_graph_t& g, int64_t num_parts, int64_t* parts)
   printf("Vert overweight: %9.3lf\n", max_overweight_v);
   printf("Edge overweight: %9.3lf\n", max_overweight_e);
   printf("Boundary overweight: %9.3lf\n", max_overweight_b);
-  printf("CommVol overweight: %9.3lf, max: %u\n", max_overweight_cv, max_comm_size);
+  printf("CommVol overweight: %9.3lf, max: %llu\n", max_overweight_cv, max_comm_size);
   printf("EdgeCut overweight: %9.3lf, max: %u\n", max_overweight_ec, max_edge_cut);
   
-  for (int i = 0; i < num_parts; ++i)
+  for (int64_t i = 0; i < num_parts; ++i)
   {
     delete [] neighborhoods[i];
     delete [] comms[i];

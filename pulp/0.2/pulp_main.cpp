@@ -189,7 +189,7 @@ int main(int argc, char **argv)
     abort();
   }
 
-  for (int index = optind; index < argc; index++)
+  for (int64_t index = optind; index < argc; index++)
   {
     if (index == optind)
     {
@@ -221,7 +221,7 @@ int main(int argc, char **argv)
   fflush(stdout);
 
   parts = new int64_t[g.n];
-  for (int i = 0; i < num_partitions; ++i)
+  for (int64_t i = 0; i < num_partitions; ++i)
   {
     if (strlen(parts_in) != 0)
     {
@@ -234,10 +234,10 @@ int main(int argc, char **argv)
       printf("Done: %9.6lf\n", elt);
     }
     else if (do_bfs_init)
-      for (int j = 0; j < g.n; ++j)
+      for (int64_t j = 0; j < g.n; ++j)
         parts[j] = -1;
     else
-      for (int i = 0; i < g.n; ++i)
+      for (int64_t i = 0; i < g.n; ++i)
         parts[i] = rand() % num_parts;
 
     pulp_part_control_t ppc = {vert_balance, edge_balance,

@@ -61,7 +61,7 @@ void label_balance_verts(pulp_graph_t& g, int64_t num_parts, int64_t* parts,
   int64_t num_verts = g.n;
   int64_t* part_sizes = new int64_t[num_parts];
  
-  for (int i = 0; i < num_parts; ++i)
+  for (int64_t i = 0; i < num_parts; ++i)
     part_sizes[i] = 0;
 
   double avg_size = num_verts / num_parts;
@@ -82,14 +82,14 @@ void label_balance_verts(pulp_graph_t& g, int64_t num_parts, int64_t* parts,
 #pragma omp parallel
 {
   int64_t* part_sizes_thread = new int64_t[num_parts];
-  for (int i = 0; i < num_parts; ++i) 
+  for (int64_t i = 0; i < num_parts; ++i) 
     part_sizes_thread[i] = 0;
 
 #pragma omp for schedule(static) nowait
-  for (int i = 0; i < num_verts; ++i)
+  for (int64_t i = 0; i < num_verts; ++i)
     ++part_sizes_thread[parts[i]];
 
-  for (int i = 0; i < num_parts; ++i) 
+  for (int64_t i = 0; i < num_parts; ++i) 
 #pragma omp atomic
     part_sizes[i] += part_sizes_thread[i];
 
@@ -103,7 +103,7 @@ void label_balance_verts(pulp_graph_t& g, int64_t num_parts, int64_t* parts,
   int64_t thread_queue_size = 0;
   int64_t thread_start;
 
-  for (int p = 0; p < num_parts; ++p)
+  for (int64_t p = 0; p < num_parts; ++p)
   {        
     part_weights[p] = vert_balance * avg_size / (double)part_sizes[p] - 1.0;
     if (part_weights[p] < 0.0)
@@ -114,10 +114,10 @@ while(t < vert_outer_iter)
 {
 
 #pragma omp for schedule(static) nowait
-  for (int i = 0; i < num_verts; ++i)
+  for (int64_t i = 0; i < num_verts; ++i)
     queue[i] = i;
 #pragma omp for schedule(static)
-  for (int i = 0; i < num_verts; ++i)
+  for (int64_t i = 0; i < num_verts; ++i)
     in_queue_next[i] = false;
 
 #pragma omp single
@@ -131,12 +131,12 @@ while(t < vert_outer_iter)
   while (/*swapped &&*/ num_iter < vert_balance_iter)
   {
 #pragma omp for schedule(guided) reduction(+:num_swapped_1) nowait
-    for (int i = 0; i < queue_size; ++i)
+    for (int64_t i = 0; i < queue_size; ++i)
     {
       int64_t v = queue[i];
       in_queue[v] = false;
       int64_t part = parts[v];
-      for (int p = 0; p < num_parts; ++p)
+      for (int64_t p = 0; p < num_parts; ++p)
         part_counts[p] = 0.0;
 
       unsigned out_degree = out_degree(g, v);
@@ -151,7 +151,7 @@ while(t < vert_outer_iter)
       
       int64_t max_part = part;
       double max_val = 0.0;
-      for (int p = 0; p < num_parts; ++p)
+      for (int64_t p = 0; p < num_parts; ++p)
       {
         part_counts[p] *= part_weights[p];
         
@@ -190,7 +190,7 @@ while(t < vert_outer_iter)
             thread_start = next_size += thread_queue_size;
             
             thread_start -= thread_queue_size;
-            for (int l = 0; l < thread_queue_size; ++l)
+            for (int64_t l = 0; l < thread_queue_size; ++l)
               queue_next[thread_start+l] = thread_queue[l];
             thread_queue_size = 0;
           }
@@ -208,7 +208,7 @@ while(t < vert_outer_iter)
               thread_start = next_size += thread_queue_size;
               
               thread_start -= thread_queue_size;
-              for (int l = 0; l < thread_queue_size; ++l)
+              for (int64_t l = 0; l < thread_queue_size; ++l)
                 queue_next[thread_start+l] = thread_queue[l];
               thread_queue_size = 0;
             }
@@ -221,7 +221,7 @@ while(t < vert_outer_iter)
     thread_start = next_size += thread_queue_size;
     
     thread_start -= thread_queue_size;
-    for (int l = 0; l < thread_queue_size; ++l)
+    for (int64_t l = 0; l < thread_queue_size; ++l)
       queue_next[thread_start+l] = thread_queue[l];
     thread_queue_size = 0;
 
@@ -251,7 +251,7 @@ while(t < vert_outer_iter)
   } // end while
 
 #pragma omp for schedule(static)
-  for (int i = 0; i < num_verts; ++i)
+  for (int64_t i = 0; i < num_verts; ++i)
     queue[i] = i;
 
 #pragma omp single
@@ -265,11 +265,11 @@ while(t < vert_outer_iter)
   while (/*swapped &&*/ num_iter < vert_refine_iter)
   {
 #pragma omp for schedule(guided) reduction(+:num_swapped_2) nowait  
-    for (int i = 0; i < queue_size; ++i)
+    for (int64_t i = 0; i < queue_size; ++i)
     {
       int64_t v = queue[i];
       in_queue[v] = false;
-      for (int p = 0; p < num_parts; ++p)
+      for (int64_t p = 0; p < num_parts; ++p)
         part_counts[p] = 0;
 
       int64_t part = parts[v];
@@ -284,7 +284,7 @@ while(t < vert_outer_iter)
 
       int64_t max_part = -1;
       int64_t max_count = -1;
-      for (int p = 0; p < num_parts; ++p)
+      for (int64_t p = 0; p < num_parts; ++p)
         if (part_counts[p] > max_count)
         {
           max_count = part_counts[p];
@@ -314,7 +314,7 @@ while(t < vert_outer_iter)
               thread_start = next_size += thread_queue_size;
               
               thread_start -= thread_queue_size;
-              for (int l = 0; l < thread_queue_size; ++l)
+              for (int64_t l = 0; l < thread_queue_size; ++l)
                 queue_next[thread_start+l] = thread_queue[l];
               thread_queue_size = 0;
             }
@@ -332,7 +332,7 @@ while(t < vert_outer_iter)
                 thread_start = next_size += thread_queue_size;
                 
                 thread_start -= thread_queue_size;
-                for (int l = 0; l < thread_queue_size; ++l)
+                for (int64_t l = 0; l < thread_queue_size; ++l)
                   queue_next[thread_start+l] = thread_queue[l];
                 thread_queue_size = 0;
               }
@@ -346,7 +346,7 @@ while(t < vert_outer_iter)
     thread_start = next_size += thread_queue_size;
     
     thread_start -= thread_queue_size;
-    for (int l = 0; l < thread_queue_size; ++l)
+    for (int64_t l = 0; l < thread_queue_size; ++l)
       queue_next[thread_start+l] = thread_queue[l];
     thread_queue_size = 0;
 
@@ -370,7 +370,7 @@ while(t < vert_outer_iter)
     num_swapped_2 = 0;
 
     max_v = 0.0;
-    for (int p = 0; p < num_parts; ++p)
+    for (int64_t p = 0; p < num_parts; ++p)
     {
       if ((double)part_sizes[p] / avg_size > max_v)
         max_v = (double)part_sizes[p] / avg_size;
@@ -438,7 +438,7 @@ void label_balance_verts_weighted(
   bool has_ewgts = (g.edge_weights != NULL);
   if (!has_vwgts) g.vertex_weights_sum = g.n;
  
-  for (int i = 0; i < num_parts; ++i)
+  for (int64_t i = 0; i < num_parts; ++i)
     part_sizes[i] = 0;
 
   double avg_size = (double)g.vertex_weights_sum / (double)num_parts;
@@ -459,17 +459,17 @@ void label_balance_verts_weighted(
 #pragma omp parallel
 {
   long* part_sizes_thread = new long[num_parts];
-  for (int i = 0; i < num_parts; ++i) 
+  for (int64_t i = 0; i < num_parts; ++i) 
     part_sizes_thread[i] = 0;
 
 #pragma omp for schedule(static) nowait
-  for (int i = 0; i < num_verts; ++i)
+  for (int64_t i = 0; i < num_verts; ++i)
     if (has_vwgts)
       part_sizes_thread[parts[i]] += g.vertex_weights[i];
     else
       ++part_sizes_thread[parts[i]];
 
-  for (int i = 0; i < num_parts; ++i) 
+  for (int64_t i = 0; i < num_parts; ++i) 
 #pragma omp atomic
     part_sizes[i] += part_sizes_thread[i];
 
@@ -483,7 +483,7 @@ void label_balance_verts_weighted(
   int64_t thread_queue_size = 0;
   int64_t thread_start;
 
-  for (int p = 0; p < num_parts; ++p)
+  for (int64_t p = 0; p < num_parts; ++p)
   {        
     part_weights[p] = vert_balance * avg_size / (double)part_sizes[p] - 1.0;
     if (part_weights[p] < 0.0)
@@ -494,10 +494,10 @@ while(t < vert_outer_iter)
 {
 
 #pragma omp for schedule(static) nowait
-  for (int i = 0; i < num_verts; ++i)
+  for (int64_t i = 0; i < num_verts; ++i)
     queue[i] = i;
 #pragma omp for schedule(static)
-  for (int i = 0; i < num_verts; ++i)
+  for (int64_t i = 0; i < num_verts; ++i)
     in_queue_next[i] = false;
 
 #pragma omp single
@@ -511,7 +511,7 @@ while(t < vert_outer_iter)
   while (/*swapped &&*/ num_iter < vert_balance_iter)
   {
 #pragma omp for schedule(guided) reduction(+:num_swapped_1) nowait
-    for (int i = 0; i < queue_size; ++i)
+    for (int64_t i = 0; i < queue_size; ++i)
     {
       int64_t v = queue[i];
       in_queue[v] = false;
@@ -519,7 +519,7 @@ while(t < vert_outer_iter)
       int64_t v_weight = 1;
       if (has_vwgts) v_weight = g.vertex_weights[v];
 
-      for (int p = 0; p < num_parts; ++p)
+      for (int64_t p = 0; p < num_parts; ++p)
         part_counts[p] = 0.0;
 
       unsigned out_degree = out_degree(g, v);
@@ -536,7 +536,7 @@ while(t < vert_outer_iter)
       
       int64_t max_part = part;
       double max_val = 0.0;
-      for (int p = 0; p < num_parts; ++p)
+      for (int64_t p = 0; p < num_parts; ++p)
       {
         part_counts[p] *= part_weights[p];
         
@@ -575,7 +575,7 @@ while(t < vert_outer_iter)
             thread_start = next_size += thread_queue_size;
             
             thread_start -= thread_queue_size;
-            for (int l = 0; l < thread_queue_size; ++l)
+            for (int64_t l = 0; l < thread_queue_size; ++l)
               queue_next[thread_start+l] = thread_queue[l];
             thread_queue_size = 0;
           }
@@ -593,7 +593,7 @@ while(t < vert_outer_iter)
               thread_start = next_size += thread_queue_size;
               
               thread_start -= thread_queue_size;
-              for (int l = 0; l < thread_queue_size; ++l)
+              for (int64_t l = 0; l < thread_queue_size; ++l)
                 queue_next[thread_start+l] = thread_queue[l];
               thread_queue_size = 0;
             }
@@ -606,7 +606,7 @@ while(t < vert_outer_iter)
     thread_start = next_size += thread_queue_size;
     
     thread_start -= thread_queue_size;
-    for (int l = 0; l < thread_queue_size; ++l)
+    for (int64_t l = 0; l < thread_queue_size; ++l)
       queue_next[thread_start+l] = thread_queue[l];
     thread_queue_size = 0;
 
@@ -636,7 +636,7 @@ while(t < vert_outer_iter)
   } // end while
 
 #pragma omp for schedule(static)
-  for (int i = 0; i < num_verts; ++i)
+  for (int64_t i = 0; i < num_verts; ++i)
     queue[i] = i;
 
 #pragma omp single
@@ -650,7 +650,7 @@ while(t < vert_outer_iter)
   while (/*swapped &&*/ num_iter < vert_refine_iter)
   {
 #pragma omp for schedule(guided) reduction(+:num_swapped_2) nowait  
-    for (int i = 0; i < queue_size; ++i)
+    for (int64_t i = 0; i < queue_size; ++i)
     {
       int64_t v = queue[i];
       in_queue[v] = false;      
@@ -658,7 +658,7 @@ while(t < vert_outer_iter)
       int64_t v_weight = 1;
       if (has_vwgts) v_weight = g.vertex_weights[v];
 
-      for (int p = 0; p < num_parts; ++p)
+      for (int64_t p = 0; p < num_parts; ++p)
         part_counts[p] = 0;
 
       unsigned out_degree = out_degree(g, v);
@@ -675,7 +675,7 @@ while(t < vert_outer_iter)
 
       int64_t max_part = -1;
       int64_t max_count = -1;
-      for (int p = 0; p < num_parts; ++p)
+      for (int64_t p = 0; p < num_parts; ++p)
         if (part_counts[p] > max_count)
         {
           max_count = part_counts[p];
@@ -705,7 +705,7 @@ while(t < vert_outer_iter)
               thread_start = next_size += thread_queue_size;
               
               thread_start -= thread_queue_size;
-              for (int l = 0; l < thread_queue_size; ++l)
+              for (int64_t l = 0; l < thread_queue_size; ++l)
                 queue_next[thread_start+l] = thread_queue[l];
               thread_queue_size = 0;
             }
@@ -723,7 +723,7 @@ while(t < vert_outer_iter)
                 thread_start = next_size += thread_queue_size;
                 
                 thread_start -= thread_queue_size;
-                for (int l = 0; l < thread_queue_size; ++l)
+                for (int64_t l = 0; l < thread_queue_size; ++l)
                   queue_next[thread_start+l] = thread_queue[l];
                 thread_queue_size = 0;
               }
@@ -737,7 +737,7 @@ while(t < vert_outer_iter)
     thread_start = next_size += thread_queue_size;
     
     thread_start -= thread_queue_size;
-    for (int l = 0; l < thread_queue_size; ++l)
+    for (int64_t l = 0; l < thread_queue_size; ++l)
       queue_next[thread_start+l] = thread_queue[l];
     thread_queue_size = 0;
 
@@ -761,7 +761,7 @@ while(t < vert_outer_iter)
     num_swapped_2 = 0;
 
     max_v = 0.0;
-    for (int p = 0; p < num_parts; ++p)
+    for (int64_t p = 0; p < num_parts; ++p)
     {
       if ((double)part_sizes[p] / avg_size > max_v)
         max_v = (double)part_sizes[p] / avg_size;

@@ -49,7 +49,7 @@ extern int64_t seed;
 
 
 // multi-source bfs with random start points
-int* init_nonrandom(pulp_graph_t& g, int64_t num_parts, int64_t* parts)
+int64_t* init_nonrandom(pulp_graph_t& g, int64_t num_parts, int64_t* parts)
 {
   int64_t num_verts = g.n;
   int64_t* queue = new int64_t[num_verts*QUEUE_MULTIPLIER];
@@ -67,15 +67,15 @@ int* init_nonrandom(pulp_graph_t& g, int64_t num_parts, int64_t* parts)
   xs1024star_seed((unsigned long)(seed + omp_get_thread_num()), &xs);
 
 #pragma omp for
-  for (int i = 0; i < num_verts; ++i)
+  for (int64_t i = 0; i < num_verts; ++i)
     parts[i] = -1;
 
 #pragma omp single
 {
-  for (int i = 0; i < num_parts; ++i)
+  for (int64_t i = 0; i < num_parts; ++i)
   {
-    int64_t vert = (int)xs1024star_next(&xs) % num_verts;
-    while (parts[vert] != -1) {vert = (int)xs1024star_next(&xs) % num_verts;}
+    int64_t vert = (int64_t)xs1024star_next(&xs) % num_verts;
+    while (parts[vert] != -1) {vert = (int64_t)xs1024star_next(&xs) % num_verts;}
     parts[vert] = i;
     queue[i] = vert;
   }
@@ -84,7 +84,7 @@ int* init_nonrandom(pulp_graph_t& g, int64_t num_parts, int64_t* parts)
   while (queue_size > 0)
   {
 #pragma omp for schedule(guided) nowait
-    for (int i = 0; i < queue_size; ++i)
+    for (int64_t i = 0; i < queue_size; ++i)
     {
       int64_t vert = queue[i];
       int64_t part = parts[vert];
@@ -104,7 +104,7 @@ int* init_nonrandom(pulp_graph_t& g, int64_t num_parts, int64_t* parts)
             thread_start = next_size += thread_queue_size;
             
             thread_start -= thread_queue_size;
-            for (int l = 0; l < thread_queue_size; ++l)
+            for (int64_t l = 0; l < thread_queue_size; ++l)
               queue_next[thread_start+l] = thread_queue[l];
             thread_queue_size = 0;
           }
@@ -115,7 +115,7 @@ int* init_nonrandom(pulp_graph_t& g, int64_t num_parts, int64_t* parts)
     thread_start = next_size += thread_queue_size;
     
     thread_start -= thread_queue_size;
-    for (int l = 0; l < thread_queue_size; ++l)
+    for (int64_t l = 0; l < thread_queue_size; ++l)
       queue_next[thread_start+l] = thread_queue[l];
     thread_queue_size = 0;
 
@@ -133,7 +133,7 @@ int* init_nonrandom(pulp_graph_t& g, int64_t num_parts, int64_t* parts)
   } // end while
 
 #pragma omp for
-  for (int i = 0; i < num_verts; ++i)
+  for (int64_t i = 0; i < num_verts; ++i)
     if (parts[i] < 0)
       parts[i] = (unsigned)xs1024star_next(&xs) % num_parts;
 } // end parallel
@@ -153,7 +153,7 @@ int* init_nonrandom(pulp_graph_t& g, int64_t num_parts, int64_t* parts)
 
 // multi-source bfs with random start points
 // constrain maximal size of part, randomly assign any remaining
-int* init_nonrandom_constrained(pulp_graph_t& g, int64_t num_parts, int64_t* parts)
+int64_t* init_nonrandom_constrained(pulp_graph_t& g, int64_t num_parts, int64_t* parts)
 {
   int64_t num_verts = g.n;
 
@@ -174,14 +174,14 @@ int* init_nonrandom_constrained(pulp_graph_t& g, int64_t num_parts, int64_t* par
   xs1024star_seed((unsigned long)(seed + omp_get_thread_num()), &xs);
 
 #pragma omp for
-  for (int i = 0; i < num_verts; ++i)
+  for (int64_t i = 0; i < num_verts; ++i)
     parts[i] = -1;
 
 #pragma omp single
 {
-  for (int i = 0; i < num_parts; ++i)
+  for (int64_t i = 0; i < num_parts; ++i)
   {
-    int64_t vert = (int)xs1024star_next(&xs) % num_verts;
+    int64_t vert = (int64_t)xs1024star_next(&xs) % num_verts;
     while (parts[vert] != -1) {vert = xs1024star_next(&xs) % num_verts;}
     parts[vert] = i;
     queue[i] = vert;
@@ -192,7 +192,7 @@ int* init_nonrandom_constrained(pulp_graph_t& g, int64_t num_parts, int64_t* par
   while (queue_size > 0)
   {
 #pragma omp for schedule(guided) nowait
-    for (int i = 0; i < queue_size; ++i)
+    for (int64_t i = 0; i < queue_size; ++i)
     {
       int64_t vert = queue[i];
       int64_t part = parts[vert];
@@ -218,7 +218,7 @@ int* init_nonrandom_constrained(pulp_graph_t& g, int64_t num_parts, int64_t* par
             thread_start = next_size += thread_queue_size;
             
             thread_start -= thread_queue_size;
-            for (int l = 0; l < thread_queue_size; ++l)
+            for (int64_t l = 0; l < thread_queue_size; ++l)
               queue_next[thread_start+l] = thread_queue[l];
             thread_queue_size = 0;
           }
@@ -229,7 +229,7 @@ int* init_nonrandom_constrained(pulp_graph_t& g, int64_t num_parts, int64_t* par
     thread_start = next_size += thread_queue_size;
     
     thread_start -= thread_queue_size;
-    for (int l = 0; l < thread_queue_size; ++l)
+    for (int64_t l = 0; l < thread_queue_size; ++l)
       queue_next[thread_start+l] = thread_queue[l];
     thread_queue_size = 0;
 
@@ -247,9 +247,9 @@ int* init_nonrandom_constrained(pulp_graph_t& g, int64_t num_parts, int64_t* par
   } // end while
 
 #pragma omp for
-  for (int i = 0; i < num_verts; ++i)
+  for (int64_t i = 0; i < num_verts; ++i)
     if (parts[i] == -1)
-      parts[i] = (int)((unsigned)xs1024star_next(&xs) % (unsigned)num_parts);
+      parts[i] = (int64_t)((unsigned)xs1024star_next(&xs) % (unsigned)num_parts);
 
 } // end parallel
   
