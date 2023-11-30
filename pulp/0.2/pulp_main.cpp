@@ -244,7 +244,7 @@ int main(int argc, char **argv)
                                do_lp_init, do_bfs_init,
                                false, // do_repart
                                do_edge_balance, do_maxcut_balance,
-                               false, // verbose_output
+                               true, // verbose_output
                                pulp_seed};
 
     printf("\nBeginning partitioning ... ");

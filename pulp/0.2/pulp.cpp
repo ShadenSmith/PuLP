@@ -115,6 +115,8 @@ extern "C" int64_t pulp_run(pulp_graph_t* g, pulp_part_control_t* ppc,
     if (verbose) printf("done: %9.6lf(s)\n", elt2);
   }
 
+  fflush(stdout);
+
 
   if (verbose) printf("\tBeginning vertex (and edge) refinement\n");
   for (int64_t boi = 0; boi < balance_outer_iter; ++boi)
@@ -189,10 +191,13 @@ extern "C" int64_t pulp_run(pulp_graph_t* g, pulp_part_control_t* ppc,
 
     elt2 = timer() - elt2;
     if (verbose) printf("\tFinished outer loop iter %lld: %9.6lf(s)\n", (boi+1), elt2);
+
+    fflush(stdout);
   }
 
   elt = timer() - elt;
   if (verbose) printf("Partitioning finished: %9.6lf(s)\n", elt);
+  fflush(stdout);
 
   return 0;
 }
