@@ -248,11 +248,13 @@ int main(int argc, char **argv)
                                pulp_seed};
 
     printf("\nBeginning partitioning ... ");
+    fflush(stdout);
     elt = timer();
     pulp_run(&g, &ppc, parts, num_parts);
     elt = timer() - elt;
     avg *= elt;
     printf("Partitioning Time: %9.6lf\n\n", elt);
+    fflush(stdout);
 
     char temp_out[1024];
     temp_out[0] = '\0';
@@ -271,10 +273,12 @@ int main(int argc, char **argv)
       strcat(temp_out, ss.str().c_str());
     }
     printf("writing parts file %s ... ", temp_out);
+    fflush(stdout);
     elt = timer();
     write_parts(temp_out, g.n, parts);
     elt = timer() - elt;
     printf("Done: %9.6lf\n", elt);
+    fflush(stdout);
 
     if (eval_quality)
       evaluate_quality(g, num_parts, parts);
