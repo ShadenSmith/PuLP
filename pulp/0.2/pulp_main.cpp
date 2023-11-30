@@ -92,8 +92,7 @@ void print_usage_full(char **argv)
 */
 int main(int argc, char **argv)
 {
-  setvbuf(stdout, NULL, _IOLBF, 0);
-  // setbuf(stdout, NULL);
+  setbuf(stdout, NULL);
   srand(time(0));
   if (argc < 3)
   {
